@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Tally App</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #f0f0f0;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      margin: 0;
+    }
+    .container {
+      background-color: #fff;
+      padding: 20px;
+      border-radius: 8px;
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+      text-align: center;
+    }
+    h1 {
+      margin-bottom: 20px;
+    }
+    .controls {
+      display: flex;
+      justify-content: space-around;
+    }
+    button {
+      padding: 10px 20px;
+      margin: 10px 5px;
+      border: none;
+      border-radius: 4px;
+      background-color: #007bff;
+      color: #fff;
+      cursor: pointer;
+      transition: background-color 0.3s ease;
+    }
+    button:hover {
+      background-color: #0056b3;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1> Redux-Inspired Tally Counter</h1>
+    <div class="controls">
+      <button id="increment">Increment</button>
+      <button id="decrement">Decrement</button>
+      <button id="reset">Reset</button>
+    </div>
+  </div>
+  <script>
+   // Define a function named createStore which takes a reducer function as a parameter
+function createStore(reducer) {
+    // Declare a variable 'state' to hold the current state of the store
+    var state;
+    // Declare an array 'listeners' to hold the subscription functions
+    var listeners = [];
+
+    // Define a function getState which returns the current state of the store
+    function getState() {
+        return state;
+    }
+
+    // Define a function dispatch which updates the state of the store based on the provided action
+    function dispatch(action) {
+        // Update the state by calling the reducer function with the current state and action
+        state = reducer(state, action);
+        // Iterate over each listener and invoke it to notify subscribers about the state change
+        for (var i = 0; i < listeners.length; i++) {
+            listeners[i]();
+        }
+    }
+
+    // Define a function to add a new listener to the store
+    function subscribe(callback) {
+        // Add the callback function to the listeners array
+        listeners.push(callback);
+    }
+
+    // Initialize the state by dispatching an empty action
+    dispatch({});
+
+    // Return an object containing methods to interact with the store: getState, dispatch, and subscribe
+    return { getState: getState, dispatch: dispatch, subscribe: subscribe };
+}
+
+// Define a reducer function named counterReducer to manage state updates for a counter
+function counterReducer(state = { count: 0 }, action) {
+    // Switch based on the action type to determine how to update the state
+    switch (action.type) {
+        case 'ADD':
+            // Increment the count in the state object and return the updated state
+            return { count: state.count + 1 };
+        case 'SUBTRACT':
+            // Decrement the count in the state object and return the updated state
+            return { count: state.count - 1 };
+        case 'RESET':
+            // Reset the count to 0 and return the updated state
+            return { count: 0 };
+        default:
+            // If the action type is unknown, return the current state without modification
+            return state;
+    }
+}
+
+// Create the store by passing the reducer function to the createStore function
+var store = createStore(counterReducer);
+
+// Subscribe to state changes and log them
+// Define a function to log the current state whenever it changes
+store.subscribe(function() {
+    console.log("State:", store.getState());
+});
+
+// Assuming HTML buttons with ids 'increment', 'decrement', 'reset' exist,
+// Attach event listeners to HTML buttons to dispatch actions when clicked
+document.getElementById('increment').addEventListener('click', function() {
+    store.dispatch({ type: 'ADD' });
+});
+
+document.getElementById('decrement').addEventListener('click', function() {
+    store.dispatch({ type: 'SUBTRACT' });
+});
+
+document.getElementById('reset').addEventListener('click', function() {
+    store.dispatch({ type: 'RESET' });
+});
+
+// Scenario 1: Initial State Verification
+// Log the initial state of the store
+console.log("Initial state:", store.getState()); // Should log { count: 0 }
+
+// Scenario 2: Incrementing the Counter
+// Dispatch two ADD actions to increment the counter
+store.dispatch({ type: 'ADD' });
+store.dispatch({ type: 'ADD' });
+
+// Scenario 3: Decrementing the Counter
+// Dispatch a SUBTRACT action to decrement the counter
+store.dispatch({ type: 'SUBTRACT' });
+
+// Scenario 4: Resetting the Counter
+// Dispatch a RESET action to reset the counter to 0
+store.dispatch({ type: 'RESET' });
+
+  </script>
+</body>
+</html>
