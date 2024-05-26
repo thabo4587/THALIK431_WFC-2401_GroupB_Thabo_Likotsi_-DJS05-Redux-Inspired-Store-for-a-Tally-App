@@ -53,19 +53,29 @@
     </div>
   </div>
   <script>
-   // Define a function named createStore which takes a reducer function as a parameter
+/**
+ * Creates a store that holds the state tree.
+ * @param {Function} reducer - A function that returns the next state tree, given the current state tree and the action to handle.
+ * @returns {Object} The store object with methods to interact with the store: getState, dispatch, and subscribe.
+ */
 function createStore(reducer) {
     // Declare a variable 'state' to hold the current state of the store
     var state;
     // Declare an array 'listeners' to hold the subscription functions
     var listeners = [];
 
-    // Define a function getState which returns the current state of the store
+    /**
+     * Returns the current state of the store.
+     * @returns {*} The current state.
+     */
     function getState() {
         return state;
     }
 
-    // Define a function dispatch which updates the state of the store based on the provided action
+    /**
+     * Dispatches an action to update the state of the store.
+     * @param {Object} action - An action object with a 'type' property and optionally other properties.
+     */
     function dispatch(action) {
         // Update the state by calling the reducer function with the current state and action
         state = reducer(state, action);
@@ -75,7 +85,10 @@ function createStore(reducer) {
         }
     }
 
-    // Define a function to add a new listener to the store
+    /**
+     * Adds a new listener to the store.
+     * @param {Function} callback - A callback function to be called when the state changes.
+     */
     function subscribe(callback) {
         // Add the callback function to the listeners array
         listeners.push(callback);
@@ -88,7 +101,12 @@ function createStore(reducer) {
     return { getState: getState, dispatch: dispatch, subscribe: subscribe };
 }
 
-// Define a reducer function named counterReducer to manage state updates for a counter
+/**
+ * A reducer function to manage state updates for a counter.
+ * @param {Object} [state={ count: 0 }] - The current state of the counter.
+ * @param {Object} action - An action object with a 'type' property.
+ * @returns {Object} The next state of the counter.
+ */
 function counterReducer(state = { count: 0 }, action) {
     // Switch based on the action type to determine how to update the state
     switch (action.type) {
@@ -111,7 +129,9 @@ function counterReducer(state = { count: 0 }, action) {
 var store = createStore(counterReducer);
 
 // Subscribe to state changes and log them
-// Define a function to log the current state whenever it changes
+/**
+ * Logs the current state whenever it changes.
+ */
 store.subscribe(function() {
     console.log("State:", store.getState());
 });
@@ -146,6 +166,7 @@ store.dispatch({ type: 'SUBTRACT' });
 // Scenario 4: Resetting the Counter
 // Dispatch a RESET action to reset the counter to 0
 store.dispatch({ type: 'RESET' });
+
 
   </script>
 </body>
